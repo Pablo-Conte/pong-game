@@ -2,67 +2,61 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
-public class SmallBall implements GameComponent, InteractiveComponent{
+public class Player implements GameComponent, InteractiveComponent {
     int x = 0, y = 0;
     Color color = Color.BLACK;
     char keys[] = null;
     boolean left = false, right = false, top = false, down = false;
+    int width = 150, height = 10;
 
-    public SmallBall(int x, int y, Color c, char... keys){
+    public Player(int x, int y, Color c, char... keys) {
         this.x = x;
         this.y = y;
         this.color = c;
         this.keys = keys;
     }
+
     @Override
     public void draw(Graphics g) {
-        // TODO Auto-generated method stub
-        if(left){
+        if (left) {
             x -= GamePanel.SPEED;
         }
 
-        if(right){
+        if (right) {
             x += GamePanel.SPEED;
         }
 
-        if(top){
+        if (top) {
             y -= GamePanel.SPEED;
         }
 
-        if(down){
+        if (down) {
             y += GamePanel.SPEED;
         }
-        
+
         g.setColor(color);
-        g.fillOval(x, y, 20, 20);
-        g.fillOval(x-10, y+20, 40, 40);
+        g.fillRect(x, y, width, height);
     }
+
     @Override
     public void notifyKeyEvent(KeyEvent evt) {
         switch (evt.getID()) {
             case KeyEvent.KEY_PRESSED:
-                if(evt.getKeyChar() == keys[0]){
+                if (evt.getKeyChar() == keys[0]) {
                     left = true;
-                }else if(evt.getKeyChar() == keys[1]){
+                } else if (evt.getKeyChar() == keys[1]) {
                     right = true;
-                }else if(evt.getKeyChar() == keys[2]){
-                    top = true;
-                }else if(evt.getKeyChar() == keys[3]){
-                    down = true;
                 }
                 break;
             case KeyEvent.KEY_RELEASED:
-                if(evt.getKeyChar() == keys[0]){
+                if (evt.getKeyChar() == keys[0]) {
+                    System.out.println(evt.getKeyChar());
                     left = false;
-                }else if(evt.getKeyChar() == keys[1]){
+                } else if (evt.getKeyChar() == keys[1]) {
                     right = false;
-                }else if(evt.getKeyChar() == keys[2]){
-                    top = false;
-                }else if(evt.getKeyChar() == keys[3]){
-                    down = false;
                 }
                 break;
         }
     }
-    
+
 }

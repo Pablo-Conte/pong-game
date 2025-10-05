@@ -1,63 +1,73 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class GamePanel extends JPanel{
+public class GamePanel extends JPanel {
     public static final int SPEED = 10;
+
+    GameComponent components[] = {
+            new Ball(380, 90),
+            new Player(350, 10, Color.white, new char[] { 'a', 'd' }),
+            new Player(350, 541, Color.white, new char[] { 'j', 'l' }),
+            new LinePoint(0, 0),
+            new LinePoint(0, 551),
+            new LineRicochet(0, 0),
+            new LineRicochet(774, 0)
+    };
     KeyListener kl = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent ke) {
             System.out.println("TYPED: " + ke.getKeyChar());
         }
+
         @Override
         public void keyPressed(KeyEvent ke) {
             System.out.println("PRESSED: " + ke.getKeyChar());
-            for(GameComponent gc:components){
-                if(gc instanceof InteractiveComponent){
-                    ((InteractiveComponent)gc).notifyKeyEvent(ke);
+            for (GameComponent gc : components) {
+                if (gc instanceof InteractiveComponent) {
+                    ((InteractiveComponent) gc).notifyKeyEvent(ke);
                 }
             }
         }
+
         @Override
         public void keyReleased(KeyEvent ke) {
-            System.out.println("PRESSED: " + ke.getKeyChar());
-            for(GameComponent gc:components){
-                if(gc instanceof InteractiveComponent){
-                    ((InteractiveComponent)gc).notifyKeyEvent(ke);
+            System.out.println("RELEASED: " + ke.getKeyChar());
+            for (GameComponent gc : components) {
+                if (gc instanceof InteractiveComponent) {
+                    ((InteractiveComponent) gc).notifyKeyEvent(ke);
                 }
             }
         };
     };
 
-    GameComponent components[] = {
-        new SquareComponent(380, 90),
-        new SmallBall(400, 220, Color.YELLOW, new char[]{'a','d', 'w', 's'})
-    };
-    Timer t = new Timer(20, (ActionEvent e) -> {
-
+    Timer refreshTimer = new Timer(20, (ActionEvent e) -> {
         repaint();
     });
-    
+
     public GamePanel() {
-        setBackground(Color.white);
+        setBackground(Color.DARK_GRAY);
         setFocusable(true);
-        requestFocusInWindow();
         addKeyListener(kl);
-        t.start();
+        refreshTimer.start();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for(GameComponent gc:components){
+
+        for (GameComponent gc : components) {
+            if (gc instanceof Ball) {
+                ((Ball) gc).calculateImpact((Player) components[1], (Player) components[2]);
+            }
             gc.draw(g);
         }
+
         Toolkit.getDefaultToolkit().sync();
     }
 }
-
