@@ -56,16 +56,11 @@ public class Ball implements GameComponent {
     }
 
     public void calculateImpact(Player player1, Player player2) {
-
-        int player1Bottom = player1.y + 10;
-        int player1Area = player1.x;
-
+        int player1Bottom = player1.y + player1.height;
         int player2Top = player2.y;
-        int player2Area = player2.x;
 
         int ballTop = y;
         int ballBottom = y + 25;
-        int ballArea = x + 12;
 
         boolean ballImpactedOnPlayer1Bottom = (ballTop <= player1Bottom);
 
@@ -79,5 +74,36 @@ public class Ball implements GameComponent {
             top = true;
             down = false;
         }
+    }
+
+    public void calculateDefeat(LinePoint lineTop, LinePoint lineBottom) {
+        int lineTopBottom = lineTop.y + lineTop.height;
+        int lineBottomTop = lineBottom.y;
+
+        int ballTop = y;
+        int ballBottom = y + 25;
+
+        boolean ballPassedLineTop = (ballBottom <= lineTopBottom);
+
+        if (ballPassedLineTop) {
+            System.out.println("Player 2 scores a point!");
+            resetPosition();
+        }
+
+        boolean ballPassedLineBottom = (ballTop >= lineBottomTop);
+
+        if (ballPassedLineBottom) {
+            System.out.println("Player 1 scores a point!");
+            resetPosition();
+        }
+    }
+
+    private void resetPosition() {
+        x = 380;
+        y = 90;
+        left = false;
+        right = true;
+        top = false;
+        down = true;
     }
 }

@@ -50,7 +50,6 @@ public class Player implements GameComponent, InteractiveComponent {
                 break;
             case KeyEvent.KEY_RELEASED:
                 if (evt.getKeyChar() == keys[0]) {
-                    System.out.println(evt.getKeyChar());
                     left = false;
                 } else if (evt.getKeyChar() == keys[1]) {
                     right = false;

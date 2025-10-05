@@ -22,12 +22,11 @@ public class GamePanel extends JPanel {
     KeyListener kl = new KeyListener() {
         @Override
         public void keyTyped(KeyEvent ke) {
-            System.out.println("TYPED: " + ke.getKeyChar());
+            return;
         }
 
         @Override
         public void keyPressed(KeyEvent ke) {
-            System.out.println("PRESSED: " + ke.getKeyChar());
             for (GameComponent gc : components) {
                 if (gc instanceof InteractiveComponent) {
                     ((InteractiveComponent) gc).notifyKeyEvent(ke);
@@ -37,7 +36,6 @@ public class GamePanel extends JPanel {
 
         @Override
         public void keyReleased(KeyEvent ke) {
-            System.out.println("RELEASED: " + ke.getKeyChar());
             for (GameComponent gc : components) {
                 if (gc instanceof InteractiveComponent) {
                     ((InteractiveComponent) gc).notifyKeyEvent(ke);
@@ -64,6 +62,7 @@ public class GamePanel extends JPanel {
         for (GameComponent gc : components) {
             if (gc instanceof Ball) {
                 ((Ball) gc).calculateImpact((Player) components[1], (Player) components[2]);
+                ((Ball) gc).calculateDefeat((LinePoint) components[3], (LinePoint) components[4]);
             }
             gc.draw(g);
         }
