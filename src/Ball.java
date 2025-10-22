@@ -76,7 +76,7 @@ public class Ball implements GameComponent {
         }
     }
 
-    public void calculateDefeat(LinePoint lineTop, LinePoint lineBottom) {
+    public void calculateDefeat(LinePoint lineTop, LinePoint lineBottom, Player player1, Player player2) {
         int lineTopBottom = lineTop.y + lineTop.height;
         int lineBottomTop = lineBottom.y;
 
@@ -86,14 +86,16 @@ public class Ball implements GameComponent {
         boolean ballPassedLineTop = (ballBottom <= lineTopBottom);
 
         if (ballPassedLineTop) {
-            System.out.println("Player 2 scores a point!");
+            int actualScore = player2.getScore();
+            player2.setScore(actualScore + 1);
             resetPosition();
         }
 
         boolean ballPassedLineBottom = (ballTop >= lineBottomTop);
 
         if (ballPassedLineBottom) {
-            System.out.println("Player 1 scores a point!");
+            int actualScore = player1.getScore();
+            player1.setScore(actualScore + 1);
             resetPosition();
         }
     }

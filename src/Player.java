@@ -8,6 +8,7 @@ public class Player implements GameComponent, InteractiveComponent {
     char keys[] = null;
     boolean left = false, right = false, top = false, down = false;
     int width = 150, height = 10;
+    int score = 0;
 
     public Player(int x, int y, Color c, char... keys) {
         this.x = x;
@@ -15,6 +16,18 @@ public class Player implements GameComponent, InteractiveComponent {
         this.color = c;
         this.keys = keys;
     }
+
+    public int getScore() {
+        return score;
+    }
+
+
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+
 
     @Override
     public void draw(Graphics g) {

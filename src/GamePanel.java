@@ -62,7 +62,7 @@ public class GamePanel extends JPanel {
         for (GameComponent gc : components) {
             if (gc instanceof Ball) {
                 ((Ball) gc).calculateImpact((Player) components[1], (Player) components[2]);
-                ((Ball) gc).calculateDefeat((LinePoint) components[3], (LinePoint) components[4]);
+                ((Ball) gc).calculateDefeat((LinePoint) components[3], (LinePoint) components[4], (Player) components[1], (Player) components[2]);
             }
             gc.draw(g);
         }
