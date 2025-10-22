@@ -4,11 +4,16 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel {
     public static final int SPEED = 10;
+    private long startTime = System.currentTimeMillis();
+
+    long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+    String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
 
     GameComponent components[] = {
             new Ball(380, 90),
@@ -66,6 +71,35 @@ public class GamePanel extends JPanel {
             }
             gc.draw(g);
         }
+        
+        long elapsed = (System.currentTimeMillis() - startTime) / 1000;
+        String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
+
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(g.getFont().deriveFont(30f));
+
+        int textWidth = g.getFontMetrics().stringWidth(timeText);
+        int textHeight = g.getFontMetrics().getAscent();
+
+        int x = (getWidth() - textWidth) / 2;
+        int y = (getHeight() / 2) + (textHeight / 2);
+
+        g.drawString(timeText, x, y);
+
+        Player player1 = (Player) components[1];
+        Player player2 = (Player) components[2];
+
+        String score1 = "Score: " + player1.getScore();
+        String score2 = "Score: " + player2.getScore();
+
+        g.setColor(new Color(230, 230, 230, 50));
+        g.setFont(g.getFont().deriveFont(20f));
+
+        int SPACE_BETWEEN_PLAYER_AND_SCORE = 35;
+
+        g.drawString(score1, player1.x, player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
+
+        g.drawString(score2, player2.x, player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
 
         Toolkit.getDefaultToolkit().sync();
     }
