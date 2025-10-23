@@ -1,3 +1,4 @@
+package gameRunner;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -8,6 +9,13 @@ import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import components.Ball;
+import components.LinePoint;
+import components.LineRicochet;
+import components.Player;
+import interfaces.GameInterface;
+import interfaces.InteractiveInterface;
+
 public class GamePanel extends JPanel {
     public static final int SPEED = 10;
     private long startTime = System.currentTimeMillis();
@@ -15,7 +23,7 @@ public class GamePanel extends JPanel {
     long elapsed = (System.currentTimeMillis() - startTime) / 1000;
     String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
 
-    GameComponent components[] = {
+    GameInterface components[] = {
             new Ball(380, 90),
             new Player(350, 10, Color.white, new char[] { 'a', 'd' }),
             new Player(350, 541, Color.white, new char[] { 'j', 'l' }),
@@ -38,18 +46,18 @@ public class GamePanel extends JPanel {
                 }
             }
 
-            for (GameComponent gc : components) {
-                if (gc instanceof InteractiveComponent) {
-                    ((InteractiveComponent) gc).notifyKeyEvent(ke);
+            for (GameInterface gc : components) {
+                if (gc instanceof InteractiveInterface) {
+                    ((InteractiveInterface) gc).notifyKeyEvent(ke);
                 }
             }
         }
 
         @Override
         public void keyReleased(KeyEvent ke) {
-            for (GameComponent gc : components) {
-                if (gc instanceof InteractiveComponent) {
-                    ((InteractiveComponent) gc).notifyKeyEvent(ke);
+            for (GameInterface gc : components) {
+                if (gc instanceof InteractiveInterface) {
+                    ((InteractiveInterface) gc).notifyKeyEvent(ke);
                 }
             }
         };
@@ -70,7 +78,7 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        for (GameComponent gc : components) {
+        for (GameInterface gc : components) {
             if (gc instanceof Ball) {
                 ((Ball) gc).calculateImpact((Player) components[1], (Player) components[2]);
                 ((Ball) gc).calculateDefeat((LinePoint) components[3], (LinePoint) components[4], (Player) components[1], (Player) components[2]);

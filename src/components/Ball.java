@@ -1,8 +1,13 @@
+package components;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
-public class Ball implements GameComponent {
+import gameRunner.GamePanel;
+import interfaces.GameInterface;
+
+
+public class Ball implements GameInterface {
     int x = 0, y = 0;
     boolean left = false, right = true, top = false, down = true;
     int SPEED = GamePanel.SPEED - 5;

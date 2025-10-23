@@ -1,7 +1,10 @@
+package components;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class LineRicochet implements GameComponent {
+import interfaces.GameInterface;
+
+public class LineRicochet implements GameInterface {
     int x = 0, y = 0;
 
     public LineRicochet(int x, int y) {

@@ -1,13 +1,18 @@
+package components;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
-public class Player implements GameComponent, InteractiveComponent {
-    int x = 0, y = 0;
+import gameRunner.GamePanel;
+import interfaces.GameInterface;
+import interfaces.InteractiveInterface;
+
+public class Player implements GameInterface, InteractiveInterface {
+    public int x = 0, y = 0;
     Color color = Color.BLACK;
     char keys[] = null;
     boolean left = false, right = false, top = false, down = false;
-    int width = 150, height = 10;
+    public int width = 150, height = 10;
     int score = 0;
 
     public Player(int x, int y, Color c, char... keys) {

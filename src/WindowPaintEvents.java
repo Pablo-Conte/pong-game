@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
+import gameRunner.GamePanel;
+
 public class WindowPaintEvents extends JFrame {
     public static void main(String[] args) {
         WindowPaintEvents wpe = new WindowPaintEvents();

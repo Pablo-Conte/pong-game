@@ -1,5 +1,6 @@
+package interfaces;
 import java.awt.Graphics;
 
-public interface GameComponent {
+public interface GameInterface {
     public void draw(Graphics g);
 }
