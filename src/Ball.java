@@ -1,11 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
 
 public class Ball implements GameComponent {
     int x = 0, y = 0;
     boolean left = false, right = true, top = false, down = true;
     int SPEED = GamePanel.SPEED - 5;
     int width = 25, height = 25;
+    private boolean isMoving = true;
 
     public Ball(int x, int y) {
         this.x = x;
@@ -101,11 +103,38 @@ public class Ball implements GameComponent {
     }
 
     private void resetPosition() {
-        x = 380;
-        y = 90;
+        x = (800 / 2) - (width);
+        y = (600 / 2) - (height);
+        left = false;
+        right = false;
+        top = false;
+        down = false;
+        isMoving = false;
+    }
+
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    public void setMovementToTheBall() {
+    Random rand = new Random();
+    
+    if (rand.nextBoolean()) {
+        left = true;
+        right = false;
+    } else {
         left = false;
         right = true;
+    }
+
+    if (rand.nextBoolean()) {
+        top = true;
+        down = false;
+    } else {
         top = false;
         down = true;
     }
+
+    isMoving = true;
+}
 }

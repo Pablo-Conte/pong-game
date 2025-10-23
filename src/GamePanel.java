@@ -32,6 +32,12 @@ public class GamePanel extends JPanel {
 
         @Override
         public void keyPressed(KeyEvent ke) {
+            if (ke.getKeyChar() == ' ') {
+                if (components[0] instanceof Ball) {
+                    ((Ball)components[0]).setMovementToTheBall();
+                }
+            }
+
             for (GameComponent gc : components) {
                 if (gc instanceof InteractiveComponent) {
                     ((InteractiveComponent) gc).notifyKeyEvent(ke);
@@ -80,9 +86,9 @@ public class GamePanel extends JPanel {
 
         int textWidth = g.getFontMetrics().stringWidth(timeText);
         int textHeight = g.getFontMetrics().getAscent();
-
-        int x = (getWidth() - textWidth) / 2;
-        int y = (getHeight() / 2) + (textHeight / 2);
+        
+        int x = (getWidth() / 2) - (textWidth / 2) - 5;
+        int y = (getHeight() / 2) + (textHeight / 2) - 50;
 
         g.drawString(timeText, x, y);
 
@@ -98,8 +104,20 @@ public class GamePanel extends JPanel {
         int SPACE_BETWEEN_PLAYER_AND_SCORE = 35;
 
         g.drawString(score1, player1.x, player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
-
         g.drawString(score2, player2.x, player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
+
+        Ball ball = (Ball) components[0];
+        if (!ball.isMoving()) {
+            g.setColor(Color.WHITE);
+            g.setFont(g.getFont().deriveFont(25f));
+    
+            String msg = "Pressione SPACE para iniciar";
+            int helpTextWidth = g.getFontMetrics().stringWidth(msg);
+            int xhelpText = (getWidth() - helpTextWidth) / 2;
+            int yhelpText = (getHeight() / 2) - 100;
+    
+            g.drawString(msg, xhelpText, yhelpText);
+        }
 
         Toolkit.getDefaultToolkit().sync();
     }
