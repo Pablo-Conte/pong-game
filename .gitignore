@@ -30,4 +30,4 @@ bin/
 .DS_Store
 
 ### Security ###
-!**/src/resources/config.properties
+!src/main/resources/config.properties
