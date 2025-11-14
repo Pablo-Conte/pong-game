@@ -1,11 +1,12 @@
-package components;
+package main.java.components;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
-import gameRunner.GamePanel;
-import interfaces.GameInterface;
-import interfaces.InteractiveInterface;
+import main.java.interfaces.GameInterface;
+import main.java.interfaces.InteractiveInterface;
+import main.java.gamerunner.GamePanel;
 
 public class Player implements GameInterface, InteractiveInterface {
     public int x = 0, y = 0;
@@ -26,13 +27,9 @@ public class Player implements GameInterface, InteractiveInterface {
         return score;
     }
 
-
-
     public void setScore(int score) {
         this.score = score;
     }
-
-
 
     @Override
     public void draw(Graphics g) {

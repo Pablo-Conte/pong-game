@@ -1,11 +1,11 @@
-package components;
+package main.java.components;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
-import gameRunner.GamePanel;
-import interfaces.GameInterface;
-
+import main.java.gamerunner.GamePanel;
+import main.java.interfaces.GameInterface;
 
 public class Ball implements GameInterface {
     int x = 0, y = 0;
@@ -17,6 +17,7 @@ public class Ball implements GameInterface {
     public Ball(int x, int y) {
         this.x = x;
         this.y = y;
+        resetPosition();
     }
 
     @Override
@@ -122,24 +123,24 @@ public class Ball implements GameInterface {
     }
 
     public void setMovementToTheBall() {
-    Random rand = new Random();
-    
-    if (rand.nextBoolean()) {
-        left = true;
-        right = false;
-    } else {
-        left = false;
-        right = true;
-    }
+        Random rand = new Random();
 
-    if (rand.nextBoolean()) {
-        top = true;
-        down = false;
-    } else {
-        top = false;
-        down = true;
-    }
+        if (rand.nextBoolean()) {
+            left = true;
+            right = false;
+        } else {
+            left = false;
+            right = true;
+        }
 
-    isMoving = true;
-}
+        if (rand.nextBoolean()) {
+            top = true;
+            down = false;
+        } else {
+            top = false;
+            down = true;
+        }
+
+        isMoving = true;
+    }
 }
