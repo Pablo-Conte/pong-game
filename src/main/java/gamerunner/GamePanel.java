@@ -22,6 +22,7 @@ public class GamePanel extends JPanel {
     public static final int SPEED = 10;
     private long startTime = System.currentTimeMillis();
     private GameSession gameSession;
+    private GameInterface[] components;
 
     long elapsed = (System.currentTimeMillis() - startTime) / 1000;
     String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
@@ -32,17 +33,22 @@ public class GamePanel extends JPanel {
         setFocusable(true);
         addKeyListener(kl);
         refreshTimer.start();
-    }
 
-    GameInterface components[] = {
+        GameInterface[] components = {
             new Ball(380, 90),
-            new Player(350, 10, Color.white, gameSession.getPlayerOnePoint() ,new char[] { 'a', 'd' }),
+            new Player(350, 10, Color.white, gameSession.getPlayerOnePoint(),new char[] { 'a', 'd' }),
             new Player(350, 541, Color.white, gameSession.getPlayerTwoPoint(),new char[] { 'j', 'l' }),
             new LinePoint(0, 0),
             new LinePoint(0, 551),
             new LineRicochet(0, 0),
             new LineRicochet(774, 0)
-    };
+        };
+
+        this.components = components;
+    }
+
+
+
     KeyListener kl=new KeyListener(){@Override public void keyTyped(KeyEvent ke){return;}
 
     @Override public void keyPressed(KeyEvent ke){boolean ballIsNotMoving=!((Ball)components[0]).isMoving();if(ke.getKeyChar()==' '&&ballIsNotMoving){if(components[0]instanceof Ball){((Ball)components[0]).setMovementToTheBall();}}
@@ -95,7 +101,6 @@ public class GamePanel extends JPanel {
 
         g.drawString(score1, player1.x, player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
         g.drawString(score2, player2.x, player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
-
         Ball ball = (Ball) components[0];
 
         if (!ball.isMoving()) {
