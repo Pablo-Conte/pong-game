@@ -11,7 +11,7 @@ import java.util.Properties;
 public class DatabaseInit {
 
     private static final String ADMIN_URL = "jdbc:postgresql://localhost:5433/postgres";
-    private static final String DB_URL = "jdbc:postgresql://localhost:5433/pong";;
+    private static final String DB_URL = "jdbc:postgresql://localhost:5433/pong";
 
     private static final String TARGET_DB = "pong";
 
@@ -59,7 +59,8 @@ public class DatabaseInit {
                             playerOnePosition POINT,
                             playerTwoPosition POINT,
                             ballPosition POINT,
-                            elapsedMillis BIGINT
+                            elapsedMillis BIGINT DEFAULT(0),
+                            createdAt DATE DEFAULT CURRENT_DATE
                         );
                     """;
 
