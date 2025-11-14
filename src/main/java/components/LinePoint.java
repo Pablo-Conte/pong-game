@@ -1,9 +1,9 @@
-package main.java.components;
+package components;
+
+import interfaces.GameInterface;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
-import main.java.interfaces.GameInterface;
 
 public class LinePoint implements GameInterface {
     public int x = 0, y = 0;

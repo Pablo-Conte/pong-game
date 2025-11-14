@@ -1,11 +1,12 @@
-package main.java.components;
+package components;
+
+import gamerunner.GamePanel;
+import interfaces.GameInterface;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
-import main.java.gamerunner.GamePanel;
-import main.java.interfaces.GameInterface;
 
 public class Ball implements GameInterface {
     int x = 0, y = 0;

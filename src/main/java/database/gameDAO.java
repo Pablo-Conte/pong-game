@@ -1,4 +1,4 @@
-package main.java.database;
+package database;
 
 public class gameDAO {
     private static final String URL = "jdbc:postgresql://localhost/gabriel";

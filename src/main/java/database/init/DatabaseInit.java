@@ -1,4 +1,4 @@
-package main.java.database.init;
+package database.init;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,28 +6,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class DatabaseInit {
 
-    private static final String ADMIN_URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/meu_jogo";
-    private static final String USER = "postgres";
-    private static final String PASS = "senha";
+    private static final String ADMIN_URL = "jdbc:postgresql://localhost:5433/postgres";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5433/pong";;
 
-    private static final String TARGET_DB = "meu_jogo";
+    private static final String TARGET_DB = "pong";
 
-    public static void main(String[] args) {
+    public DatabaseInit(Properties props) {
+        String USER = props.getProperty("db.user");
+        String PASS = props.getProperty("db.pass");
+
         try {
-            checkAndCreateDatabase();
-            createTablesIfNotExists();
+            checkAndCreateDatabase(USER, PASS);
+            createTablesIfNotExists(USER, PASS);
             System.out.println("Banco verificado com sucesso!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void checkAndCreateDatabase() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(ADMIN_URL, USER, PASS)) {
+    private static void checkAndCreateDatabase(String user, String pass) throws SQLException {
+
+        try (Connection conn = DriverManager.getConnection(ADMIN_URL, user, pass)) {
             String sql = "SELECT 1 FROM pg_database WHERE datname = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, TARGET_DB);
@@ -46,14 +49,17 @@ public class DatabaseInit {
         }
     }
 
-    private static void createTablesIfNotExists() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+    private static void createTablesIfNotExists(String user, String pass) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(DB_URL, user, pass)) {
             String sql = """
-                        CREATE TABLE IF NOT EXISTS jogadores (
+                        CREATE TABLE IF NOT EXISTS GameSession (
                             id SERIAL PRIMARY KEY,
-                            nome VARCHAR(100),
-                            nivel INT DEFAULT 1,
-                            experiencia INT DEFAULT 0
+                            playerOnePoint int DEFAULT(0),
+                            playerTwoPoint int DEFAULT(0),
+                            playerOnePosition POINT,
+                            playerTwoPosition POINT,
+                            ballPosition POINT,
+                            elapsedMillis BIGINT
                         );
                     """;
 

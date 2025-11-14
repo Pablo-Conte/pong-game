@@ -1,4 +1,4 @@
-package main.java.gamerunner;
+package gamerunner;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,12 +10,12 @@ import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import main.java.components.Ball;
-import main.java.components.LinePoint;
-import main.java.components.LineRicochet;
-import main.java.components.Player;
-import main.java.interfaces.GameInterface;
-import main.java.interfaces.InteractiveInterface;
+import components.Ball;
+import components.LinePoint;
+import components.LineRicochet;
+import components.Player;
+import interfaces.GameInterface;
+import interfaces.InteractiveInterface;
 
 public class GamePanel extends JPanel {
     public static final int SPEED = 10;

@@ -1,12 +1,12 @@
-package main.java.components;
+package components;
+
+import gamerunner.GamePanel;
+import interfaces.GameInterface;
+import interfaces.InteractiveInterface;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-
-import main.java.interfaces.GameInterface;
-import main.java.interfaces.InteractiveInterface;
-import main.java.gamerunner.GamePanel;
 
 public class Player implements GameInterface, InteractiveInterface {
     public int x = 0, y = 0;

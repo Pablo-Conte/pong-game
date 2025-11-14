@@ -4,7 +4,8 @@ import java.util.Properties;
 
 import javax.swing.JFrame;
 
-import main.java.gamerunner.GamePanel;
+import database.init.DatabaseInit;
+import gamerunner.GamePanel;
 
 public class Main extends JFrame {
     public static void main(String[] args) {
@@ -12,7 +13,7 @@ public class Main extends JFrame {
         wpe.setup();
     }
 
-    public static void initializeProps() {
+    public static Properties initializeProps() {
         Properties props = new Properties();
 
         try (InputStream input = Main.class
@@ -31,10 +32,14 @@ public class Main extends JFrame {
 
         String host = props.getProperty("db.host");
         System.out.println("Host: " + host);
+
+        return props;
     }
 
     public void setup() {
-        initializeProps();
+        Properties props = initializeProps();
+        new DatabaseInit(props);
+
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
