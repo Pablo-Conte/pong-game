@@ -16,11 +16,12 @@ public class Player implements GameInterface, InteractiveInterface {
     public int width = 150, height = 10;
     int score = 0;
 
-    public Player(int x, int y, Color c, char... keys) {
+    public Player(int x, int y, Color c, int score, char... keys) {
         this.x = x;
         this.y = y;
         this.color = c;
         this.keys = keys;
+        this.score = score;
     }
 
     public int getScore() {

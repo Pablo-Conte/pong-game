@@ -50,6 +50,14 @@ public class Main extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setTitle("Pong-Game");
+        System.out.println(gameSession);
+        GamePanel pa = new GamePanel(gameSession);
+        getContentPane().add(pa, BorderLayout.CENTER);
+        setVisible(true);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -59,12 +67,5 @@ public class Main extends JFrame {
             }
 
         });
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setTitle("Pong-Game");
-        GamePanel pa = new GamePanel();
-        getContentPane().add(pa, BorderLayout.CENTER);
-        setVisible(true);
     }
 }

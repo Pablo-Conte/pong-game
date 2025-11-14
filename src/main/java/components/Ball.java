@@ -1,5 +1,6 @@
 package components;
 
+import database.model.GameSession;
 import gamerunner.GamePanel;
 import interfaces.GameInterface;
 
@@ -85,7 +86,7 @@ public class Ball implements GameInterface {
         }
     }
 
-    public void calculateDefeat(LinePoint lineTop, LinePoint lineBottom, Player player1, Player player2) {
+    public void calculateDefeat(LinePoint lineTop, LinePoint lineBottom, Player player1, Player player2, GameSession gameSession) {
         int lineTopBottom = lineTop.y + lineTop.height;
         int lineBottomTop = lineBottom.y;
 
@@ -97,6 +98,7 @@ public class Ball implements GameInterface {
         if (ballPassedLineTop) {
             int actualScore = player2.getScore();
             player2.setScore(actualScore + 1);
+            gameSession.setPlayerTwoPoint(gameSession.getPlayerTwoPoint() + 1);
             resetPosition();
         }
 
@@ -105,6 +107,7 @@ public class Ball implements GameInterface {
         if (ballPassedLineBottom) {
             int actualScore = player1.getScore();
             player1.setScore(actualScore + 1);
+            gameSession.setPlayerOnePoint(gameSession.getPlayerOnePoint() + 1);
             resetPosition();
         }
     }
