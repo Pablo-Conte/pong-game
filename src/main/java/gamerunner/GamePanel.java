@@ -6,6 +6,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.math.BigInteger;
+import java.util.Date;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -17,6 +19,7 @@ import components.Player;
 import database.model.GameSession;
 import interfaces.GameInterface;
 import interfaces.InteractiveInterface;
+import org.postgresql.geometric.PGpoint;
 
 public class GamePanel extends JPanel {
     public static final int SPEED = 10;
@@ -34,10 +37,15 @@ public class GamePanel extends JPanel {
         addKeyListener(kl);
         refreshTimer.start();
 
+        int playerOnePoints = gameSession.getPlayerOnePoint();
+        int playerTwoPoints = gameSession.getPlayerTwoPoint();
+        PGpoint playerOnePosition = gameSession.getPlayerOnePosition();
+        PGpoint playerTwoPosition = gameSession.getPlayerTwoPosition();
+
         GameInterface[] components = {
             new Ball(380, 90),
-            new Player(350, 10, Color.white, gameSession.getPlayerOnePoint(),new char[] { 'a', 'd' }),
-            new Player(350, 541, Color.white, gameSession.getPlayerTwoPoint(),new char[] { 'j', 'l' }),
+            new Player(playerOnePosition.x, playerOnePosition.y, Color.white, playerOnePoints,new char[] { 'a', 'd' }),
+            new Player(playerTwoPosition.x, playerTwoPosition.y, Color.white, playerTwoPoints,new char[] { 'j', 'l' }),
             new LinePoint(0, 0),
             new LinePoint(0, 551),
             new LineRicochet(0, 0),
@@ -99,8 +107,8 @@ public class GamePanel extends JPanel {
 
         int SPACE_BETWEEN_PLAYER_AND_SCORE = 35;
 
-        g.drawString(score1, player1.x, player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
-        g.drawString(score2, player2.x, player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
+        g.drawString(score1, (int)player1.x, (int)player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
+        g.drawString(score2, (int)player2.x, (int)player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
         Ball ball = (Ball) components[0];
 
         if (!ball.isMoving()) {
@@ -114,6 +122,12 @@ public class GamePanel extends JPanel {
 
             g.drawString(msg, xhelpText, yhelpText);
         }
+
+        gameSession.setPlayerOnePosition(new PGpoint(player1.x, player1.y));
+        gameSession.setPlayerTwoPosition(new PGpoint(player2.x, player2.y));
+        Date elapsedMillis = gameSession.getc
+
+        gameSession.setElapsedMillis();
 
         Toolkit.getDefaultToolkit().sync();
     }

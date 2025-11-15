@@ -10,8 +10,8 @@ import java.util.Properties;
 
 public class DatabaseInit {
 
-    private static final String ADMIN_URL = "jdbc:postgresql://localhost:5433/postgres";
-    private static final String DB_URL = "jdbc:postgresql://localhost:5433/pong";
+    private static final String ADMIN_URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/pong";
 
     private static final String TARGET_DB = "pong";
 

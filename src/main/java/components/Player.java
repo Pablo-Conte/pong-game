@@ -9,14 +9,14 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 public class Player implements GameInterface, InteractiveInterface {
-    public int x = 0, y = 0;
+    public double x = 0, y = 0;
     Color color = Color.BLACK;
     char keys[] = null;
     boolean left = false, right = false, top = false, down = false;
     public int width = 150, height = 10;
     int score = 0;
 
-    public Player(int x, int y, Color c, int score, char... keys) {
+    public Player(double x, double y, Color c, int score, char... keys) {
         this.x = x;
         this.y = y;
         this.color = c;
@@ -51,7 +51,7 @@ public class Player implements GameInterface, InteractiveInterface {
         }
 
         g.setColor(color);
-        g.fillRect(x, y, width, height);
+        g.fillRect((int)x, (int)y, width, height);
     }
 
     @Override

@@ -53,7 +53,7 @@ public class Ball implements GameInterface {
     }
 
     private boolean areWeInTheSameWidthArea(Player player) {
-        int playerX = player.x;
+        int playerX = (int)player.x;
         int playerWidth = player.width;
         int ballX = x;
         int ballWidth = width;
@@ -66,8 +66,8 @@ public class Ball implements GameInterface {
     }
 
     public void calculateImpact(Player player1, Player player2) {
-        int player1Bottom = player1.y + player1.height;
-        int player2Top = player2.y;
+        int player1Bottom = (int)player1.y + (int)player1.height;
+        int player2Top = (int)player2.y;
 
         int ballTop = y;
         int ballBottom = y + 25;

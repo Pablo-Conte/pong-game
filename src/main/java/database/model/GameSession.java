@@ -2,6 +2,8 @@ package database.model;
 
 import org.postgresql.geometric.PGpoint;
 
+import java.util.Date;
+
 public class GameSession {
     private int id;
     private int playerOnePoint;
@@ -10,6 +12,7 @@ public class GameSession {
     private PGpoint playerTwoPosition;
     private PGpoint ballPosition;
     private long elapsedMillis;
+    private Date createdAt;
 
     public GameSession() {}
 
@@ -20,7 +23,8 @@ public class GameSession {
             PGpoint playerOnePosition,
             PGpoint playerTwoPosition,
             PGpoint ballPosition,
-            long elapsedMillis
+            long elapsedMillis,
+            Date createdAt
     ) {
         this.id = id;
         this.playerOnePoint = playerOnePoint;
@@ -29,6 +33,7 @@ public class GameSession {
         this.playerTwoPosition = playerTwoPosition;
         this.ballPosition = ballPosition;
         this.elapsedMillis = elapsedMillis;
+        this.createdAt = createdAt;
     }
 
 
@@ -98,6 +103,14 @@ public class GameSession {
                 ", ballPosition=" + pointToStr(ballPosition) +
                 ", elapsedMillis=" + elapsedMillis +
                 '}';
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     private String pointToStr(PGpoint p) {

@@ -4,10 +4,11 @@ import database.model.GameSession;
 import org.postgresql.geometric.PGpoint;
 
 import java.sql.*;
+import java.util.Date;
 import java.util.Properties;
 
 public class GameDAO {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5433/pong";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5432/pong";
     private static final String TARGET_DB = "pong";
     private Properties props;
 
@@ -69,6 +70,7 @@ public class GameDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt("id");
+                Date createdAt = rs.getDate("createdAt");
 
                 return new GameSession(
                         id,
@@ -77,7 +79,8 @@ public class GameDAO {
                         new PGpoint(350, 10),
                         new PGpoint(350, 541),
                         new PGpoint(380, 90),
-                        0
+                        0,
+                        createdAt
                 );
             }
             return null;

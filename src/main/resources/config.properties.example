@@ -1,5 +1,3 @@
 db.host=localhost
-db.port=5432
-db.name=meu_jogo
 db.user=postgres
-db.password=senha123
+db.pass=senha123
