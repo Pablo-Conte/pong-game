@@ -2,7 +2,10 @@ package database.model;
 
 import org.postgresql.geometric.PGpoint;
 
-import java.util.Date;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+
 
 public class GameSession {
     private int id;
@@ -11,10 +14,8 @@ public class GameSession {
     private PGpoint playerOnePosition;
     private PGpoint playerTwoPosition;
     private PGpoint ballPosition;
-    private long elapsedMillis;
-    private Date createdAt;
-
-    public GameSession() {}
+    private BigInteger elapsedTime;
+    private Timestamp createdAt;
 
     public GameSession(
             int id,
@@ -23,8 +24,8 @@ public class GameSession {
             PGpoint playerOnePosition,
             PGpoint playerTwoPosition,
             PGpoint ballPosition,
-            long elapsedMillis,
-            Date createdAt
+            BigInteger elapsedTime,
+            Timestamp createdAt
     ) {
         this.id = id;
         this.playerOnePoint = playerOnePoint;
@@ -32,17 +33,21 @@ public class GameSession {
         this.playerOnePosition = playerOnePosition;
         this.playerTwoPosition = playerTwoPosition;
         this.ballPosition = ballPosition;
-        this.elapsedMillis = elapsedMillis;
+        this.elapsedTime = elapsedTime;
         this.createdAt = createdAt;
+
     }
 
+    public BigInteger getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(BigInteger elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getPlayerOnePoint() {
@@ -81,17 +86,6 @@ public class GameSession {
         return ballPosition;
     }
 
-    public void setBallPosition(PGpoint ballPosition) {
-        this.ballPosition = ballPosition;
-    }
-
-    public long getElapsedMillis() {
-        return elapsedMillis;
-    }
-
-    public void setElapsedMillis(long elapsedMillis) {
-        this.elapsedMillis = elapsedMillis;
-    }
     @Override
     public String toString() {
         return "GameSession{" +
@@ -101,15 +95,15 @@ public class GameSession {
                 ", playerOnePosition=" + pointToStr(playerOnePosition) +
                 ", playerTwoPosition=" + pointToStr(playerTwoPosition) +
                 ", ballPosition=" + pointToStr(ballPosition) +
-                ", elapsedMillis=" + elapsedMillis +
+                ", createdAt=" + createdAt.toString() +
                 '}';
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 

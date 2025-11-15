@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.math.BigInteger;
-import java.util.Date;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -16,56 +15,91 @@ import components.Ball;
 import components.LinePoint;
 import components.LineRicochet;
 import components.Player;
-import database.model.GameSession;
+import database.GameDAO;
 import interfaces.GameInterface;
 import interfaces.InteractiveInterface;
 import org.postgresql.geometric.PGpoint;
 
 public class GamePanel extends JPanel {
     public static final int SPEED = 10;
-    private long startTime = System.currentTimeMillis();
-    private GameSession gameSession;
+
+    private GameSessionManager gameSessionManager;
+    private GameDAO gameDAO;
     private GameInterface[] components;
+    private long startTime;
 
-    long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-    String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
+    private String timeText = "";
 
-    public GamePanel(GameSession gameSession) {
-        this.gameSession = gameSession;
+    public GamePanel(GameDAO gameDAO, GameSessionManager gameSessionManager) {
+        this.gameSessionManager = gameSessionManager;
+        this.gameDAO = gameDAO;
+
         setBackground(Color.DARK_GRAY);
         setFocusable(true);
         addKeyListener(kl);
+
+        this.startTime = System.currentTimeMillis();
+
         refreshTimer.start();
+        refreshElapsedTimer.start();
 
-        int playerOnePoints = gameSession.getPlayerOnePoint();
-        int playerTwoPoints = gameSession.getPlayerTwoPoint();
-        PGpoint playerOnePosition = gameSession.getPlayerOnePosition();
-        PGpoint playerTwoPosition = gameSession.getPlayerTwoPosition();
+        int playerOnePoints = gameSessionManager.getSession().getPlayerOnePoint();
+        int playerTwoPoints = gameSessionManager.getSession().getPlayerTwoPoint();
+        PGpoint playerOnePosition = gameSessionManager.getSession().getPlayerOnePosition();
+        PGpoint playerTwoPosition = gameSessionManager.getSession().getPlayerTwoPosition();
 
-        GameInterface[] components = {
-            new Ball(380, 90),
-            new Player(playerOnePosition.x, playerOnePosition.y, Color.white, playerOnePoints,new char[] { 'a', 'd' }),
-            new Player(playerTwoPosition.x, playerTwoPosition.y, Color.white, playerTwoPoints,new char[] { 'j', 'l' }),
-            new LinePoint(0, 0),
-            new LinePoint(0, 551),
-            new LineRicochet(0, 0),
-            new LineRicochet(774, 0)
+        this.components = new GameInterface[] {
+                new Ball(380, 90),
+                new Player(playerOnePosition.x, playerOnePosition.y, Color.WHITE, playerOnePoints, new char[] { 'a', 'd' }),
+                new Player(playerTwoPosition.x, playerTwoPosition.y, Color.WHITE, playerTwoPoints, new char[] { 'j', 'l' }),
+                new LinePoint(0, 0),
+                new LinePoint(0, 551),
+                new LineRicochet(0, 0),
+                new LineRicochet(774, 0)
         };
-
-        this.components = components;
     }
 
+    KeyListener kl = new KeyListener() {
+        @Override public void keyTyped(KeyEvent ke) { }
+
+        @Override
+        public void keyPressed(KeyEvent ke) {
+            boolean ballIsNotMoving = !((Ball) components[0]).isMoving();
+            if (ke.getKeyChar() == ' ' && ballIsNotMoving) {
+                ((Ball) components[0]).setMovementToTheBall();
+            }
+
+            if (ke.getKeyCode() == KeyEvent.VK_ENTER && ballIsNotMoving) {
+                gameDAO.updateGameSession(gameSessionManager.getSession());
+                gameSessionManager.setSession(gameDAO.createGameSession());
+                ((Player) components[1]).x = gameSessionManager.getSession().getPlayerOnePosition().x;
+                ((Player) components[1]).y = gameSessionManager.getSession().getPlayerOnePosition().y;
+                ((Player) components[2]).x = gameSessionManager.getSession().getPlayerTwoPosition().x;
+                ((Player) components[2]).y = gameSessionManager.getSession().getPlayerTwoPosition().y;
+            }
 
 
-    KeyListener kl=new KeyListener(){@Override public void keyTyped(KeyEvent ke){return;}
+            for (GameInterface gc : components) {
+                if (gc instanceof InteractiveInterface) {
+                    ((InteractiveInterface) gc).notifyKeyEvent(ke);
+                }
+            }
+        }
 
-    @Override public void keyPressed(KeyEvent ke){boolean ballIsNotMoving=!((Ball)components[0]).isMoving();if(ke.getKeyChar()==' '&&ballIsNotMoving){if(components[0]instanceof Ball){((Ball)components[0]).setMovementToTheBall();}}
+        @Override
+        public void keyReleased(KeyEvent ke) {
+            for (GameInterface gc : components) {
+                if (gc instanceof InteractiveInterface) {
+                    ((InteractiveInterface) gc).notifyKeyEvent(ke);
+                }
+            }
+        }
+    };
 
-    for(GameInterface gc:components){if(gc instanceof InteractiveInterface){((InteractiveInterface)gc).notifyKeyEvent(ke);}}}
+    Timer refreshTimer = new Timer(20, (ActionEvent e) -> repaint());
 
-    @Override public void keyReleased(KeyEvent ke){for(GameInterface gc:components){if(gc instanceof InteractiveInterface){((InteractiveInterface)gc).notifyKeyEvent(ke);}}};};
-
-    Timer refreshTimer = new Timer(20, (ActionEvent e) -> {
+    Timer refreshElapsedTimer = new Timer(1000, e -> {
+        gameSessionManager.getSession().setElapsedTime(gameSessionManager.getSession().getElapsedTime().add(BigInteger.ONE));
         repaint();
     });
 
@@ -77,57 +111,66 @@ public class GamePanel extends JPanel {
             if (gc instanceof Ball) {
                 ((Ball) gc).calculateImpact((Player) components[1], (Player) components[2]);
                 ((Ball) gc).calculateDefeat((LinePoint) components[3], (LinePoint) components[4],
-                        (Player) components[1], (Player) components[2], gameSession);
+                        (Player) components[1], (Player) components[2], gameSessionManager.getSession());
             }
             gc.draw(g);
+
+            if (components[1] instanceof Player) {
+                Player player1 = (Player) components[1];
+                gameSessionManager.getSession().setPlayerOnePosition(new PGpoint((int)player1.x, (int)player1.y));
+            }
+
+            if (components[2] instanceof Player) {
+                Player player2 = (Player) components[2];
+                gameSessionManager.getSession().setPlayerTwoPosition(new PGpoint((int)player2.x, (int)player2.y));
+            }
         }
 
-        long elapsed = (System.currentTimeMillis() - startTime) / 1000;
-        String timeText = String.format("%02d:%02d", elapsed / 60, elapsed % 60);
+        long elapsedSeconds = gameSessionManager.getSession().getElapsedTime().longValue();
+        timeText = String.format("%02d:%02d", elapsedSeconds / 60, elapsedSeconds % 60);
 
         g.setColor(Color.LIGHT_GRAY);
         g.setFont(g.getFont().deriveFont(30f));
-
         int textWidth = g.getFontMetrics().stringWidth(timeText);
         int textHeight = g.getFontMetrics().getAscent();
-
         int x = (getWidth() / 2) - (textWidth / 2) - 5;
         int y = (getHeight() / 2) + (textHeight / 2) - 50;
-
         g.drawString(timeText, x, y);
 
-        Player player1 = (Player) components[1];
         Player player2 = (Player) components[2];
 
-        String score1 = "Score: " + player1.getScore();
-        String score2 = "Score: " + player2.getScore();
+        String score1 = "Score: " + gameSessionManager.getSession().getPlayerOnePoint();
+        String score2 = "Score: " + gameSessionManager.getSession().getPlayerTwoPoint();
 
         g.setColor(new Color(230, 230, 230, 50));
         g.setFont(g.getFont().deriveFont(20f));
 
         int SPACE_BETWEEN_PLAYER_AND_SCORE = 35;
+        PGpoint playerOnePosition = gameSessionManager.getSession().getPlayerOnePosition();
+        PGpoint playerTwoPosition = gameSessionManager.getSession().getPlayerTwoPosition();
+        g.drawString(score1, (int)playerOnePosition.x, (int)playerOnePosition.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
+        g.drawString(score2, (int)playerTwoPosition.x, (int)playerTwoPosition.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
 
-        g.drawString(score1, (int)player1.x, (int)player1.y + SPACE_BETWEEN_PLAYER_AND_SCORE);
-        g.drawString(score2, (int)player2.x, (int)player2.y + player2.height - SPACE_BETWEEN_PLAYER_AND_SCORE);
         Ball ball = (Ball) components[0];
-
         if (!ball.isMoving()) {
             g.setColor(Color.WHITE);
             g.setFont(g.getFont().deriveFont(25f));
 
             String msg = "Pressione SPACE para iniciar";
+            String msg2 = "Ou ENTER para reiniciar o jogo";
             int helpTextWidth = g.getFontMetrics().stringWidth(msg);
             int xhelpText = (getWidth() - helpTextWidth) / 2;
             int yhelpText = (getHeight() / 2) - 100;
-
+            int helpText2Width = g.getFontMetrics().stringWidth(msg2);
+            int xhelpText2 = (getWidth() - helpText2Width) / 2;
+            int yhelpText2 = yhelpText + 30;
             g.drawString(msg, xhelpText, yhelpText);
+            g.setColor(new Color(230, 230, 230, 50));
+            g.drawString(msg2, xhelpText2, yhelpText2);
         }
 
-        gameSession.setPlayerOnePosition(new PGpoint(player1.x, player1.y));
-        gameSession.setPlayerTwoPosition(new PGpoint(player2.x, player2.y));
-        Date elapsedMillis = gameSession.getc
-
-        gameSession.setElapsedMillis();
+        gameSessionManager.getSession().setPlayerOnePosition(new PGpoint((int)playerOnePosition.x, (int)playerOnePosition.y));
+        gameSessionManager.getSession().setPlayerTwoPosition(new PGpoint((int)playerTwoPosition.x, (int)playerTwoPosition.y));
 
         Toolkit.getDefaultToolkit().sync();
     }

@@ -1,3 +1,4 @@
 db.host=localhost
 db.user=postgres
 db.pass=senha123
+db.url=jdbc:postgresql://${db.host}:5432/mydatabase

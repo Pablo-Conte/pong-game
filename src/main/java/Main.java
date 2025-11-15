@@ -10,6 +10,7 @@ import database.GameDAO;
 import database.init.DatabaseInit;
 import database.model.GameSession;
 import gamerunner.GamePanel;
+import gamerunner.GameSessionManager;
 
 public class Main extends JFrame {
     public static void main(String[] args) {
@@ -53,15 +54,15 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         setTitle("Pong-Game");
-        System.out.println(gameSession);
-        GamePanel pa = new GamePanel(gameSession);
+        GameSessionManager gameSessionManager = new GameSessionManager(gameSession);
+        GamePanel pa = new GamePanel(gameDAO, gameSessionManager);
         getContentPane().add(pa, BorderLayout.CENTER);
         setVisible(true);
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                gameDAO.updateGameSession(gameSession);
+                gameDAO.updateGameSession(gameSessionManager.getSession());
 
                 dispose();
             }

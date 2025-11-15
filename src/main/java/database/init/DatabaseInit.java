@@ -10,27 +10,26 @@ import java.util.Properties;
 
 public class DatabaseInit {
 
-    private static final String ADMIN_URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/pong";
-
     private static final String TARGET_DB = "pong";
 
     public DatabaseInit(Properties props) {
-        String USER = props.getProperty("db.user");
-        String PASS = props.getProperty("db.pass");
+        String user = props.getProperty("db.user");
+        String pass = props.getProperty("db.pass");
+        String db_admin_url = props.getProperty("db.admin.url");
+        String db_url = props.getProperty("db.url");
 
         try {
-            checkAndCreateDatabase(USER, PASS);
-            createTablesIfNotExists(USER, PASS);
+            checkAndCreateDatabase(user, pass, db_admin_url);
+            createTablesIfNotExists(user, pass, db_url);
             System.out.println("Banco verificado com sucesso!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void checkAndCreateDatabase(String user, String pass) throws SQLException {
+    private static void checkAndCreateDatabase(String user, String pass, String db_admin_url) throws SQLException {
 
-        try (Connection conn = DriverManager.getConnection(ADMIN_URL, user, pass)) {
+        try (Connection conn = DriverManager.getConnection(db_admin_url, user, pass)) {
             String sql = "SELECT 1 FROM pg_database WHERE datname = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, TARGET_DB);
@@ -49,18 +48,18 @@ public class DatabaseInit {
         }
     }
 
-    private static void createTablesIfNotExists(String user, String pass) throws SQLException {
-        try (Connection conn = DriverManager.getConnection(DB_URL, user, pass)) {
+    private static void createTablesIfNotExists(String user, String pass, String db_url) throws SQLException {
+        try (Connection conn = DriverManager.getConnection(db_url, user, pass)) {
             String sql = """
                         CREATE TABLE IF NOT EXISTS GameSession (
                             id SERIAL PRIMARY KEY,
                             playerOnePoint int DEFAULT(0),
                             playerTwoPoint int DEFAULT(0),
-                            playerOnePosition POINT,
-                            playerTwoPosition POINT,
+                            playerOnePosition POINT DEFAULT(POINT(350,10)),
+                            playerTwoPosition POINT DEFAULT(POINT(350,541)),
                             ballPosition POINT,
-                            elapsedMillis BIGINT DEFAULT(0),
-                            createdAt DATE DEFAULT CURRENT_DATE
+                            elapsedTime BIGINT DEFAULT(0),
+                            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                         );
                     """;
 

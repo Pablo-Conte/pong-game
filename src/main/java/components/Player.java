@@ -1,6 +1,7 @@
 package components;
 
 import gamerunner.GamePanel;
+import gamerunner.GameSessionManager;
 import interfaces.GameInterface;
 import interfaces.InteractiveInterface;
 
