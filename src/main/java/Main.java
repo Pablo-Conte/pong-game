@@ -35,9 +35,6 @@ public class Main extends JFrame {
             e.printStackTrace();
         }
 
-        String host = props.getProperty("db.host");
-        System.out.println("Host: " + host);
-
         return props;
     }
 

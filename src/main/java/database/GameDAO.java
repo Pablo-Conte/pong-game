@@ -7,8 +7,7 @@ import java.math.BigInteger;
 import java.sql.*;
 import java.util.Properties;
 
-public class GameDAO {;
-    private static final String TARGET_DB = "pong";
+public class GameDAO {
     private Properties props;
 
     public GameDAO(Properties props) {
@@ -40,9 +39,9 @@ public class GameDAO {;
                 int p1 = rs.getInt("playerOnePoint");
                 int p2 = rs.getInt("playerTwoPoint");
 
-                PGpoint p1Pos = (PGpoint) rs.getObject("playerOnePosition");
-                PGpoint p2Pos = (PGpoint) rs.getObject("playerTwoPosition");
-                PGpoint ballPos = (PGpoint) rs.getObject("ballPosition");
+                PGpoint p1Pos = new PGpoint(rs.getDouble("playerOnePositionX"), rs.getDouble("playerOnePositionY"));
+                PGpoint p2Pos = new PGpoint(rs.getDouble("playerTwoPositionX"), rs.getDouble("playerTwoPositionY"));
+                PGpoint ballPos = new PGpoint(rs.getDouble("ballPositionX"), rs.getDouble("ballPositionY"));
 
                 BigInteger elapsedTime = rs.getBigDecimal("elapsedTime").toBigInteger();
                 Timestamp createdAt = rs.getTimestamp("createdAt");
@@ -61,34 +60,41 @@ public class GameDAO {;
         String pass = props.getProperty("db.pass");
         String db_url = props.getProperty("db.url");
 
-        String sql = """
-            INSERT INTO GameSession DEFAULT VALUES
-            RETURNING id, elapsedTime, createdat;
-        """;
+        String sql = "INSERT INTO GameSession DEFAULT VALUES";
 
         try (Connection conn = DriverManager.getConnection(db_url, user, pass);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                int id = rs.getInt("id");
-                ResultSetMetaData meta = rs.getMetaData();
-                int columnCount = meta.getColumnCount();
+            ps.executeUpdate();
 
-                BigInteger elapsedTime = rs.getBigDecimal("elapsedTime").toBigInteger();
-                Timestamp createdAt = rs.getTimestamp("createdat");
-                return new GameSession(
-                        id,
-                        0,
-                        0,
-                        new PGpoint(350, 10),
-                        new PGpoint(350, 541),
-                        new PGpoint(380, 90),
-                        elapsedTime,
-                        createdAt
-                );
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (!keys.next()) {
+                    return null;
+                }
+                int id = keys.getInt(1);
+
+                try (PreparedStatement select = conn.prepareStatement(
+                        "SELECT elapsedTime, createdAt FROM GameSession WHERE id = ?")) {
+                    select.setInt(1, id);
+                    ResultSet rs = select.executeQuery();
+                    if (!rs.next()) {
+                        return null;
+                    }
+
+                    BigInteger elapsedTime = rs.getBigDecimal("elapsedTime").toBigInteger();
+                    Timestamp createdAt = rs.getTimestamp("createdAt");
+                    return new GameSession(
+                            id,
+                            0,
+                            0,
+                            new PGpoint(350, 10),
+                            new PGpoint(350, 541),
+                            new PGpoint(380, 90),
+                            elapsedTime,
+                            createdAt
+                    );
+                }
             }
-            return null;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,9 +112,12 @@ public class GameDAO {;
             SET
                 playerOnePoint = ?,
                 playerTwoPoint = ?,
-                playerOnePosition = ?,
-                playerTwoPosition = ?,
-                ballPosition = ?,
+                playerOnePositionX = ?,
+                playerOnePositionY = ?,
+                playerTwoPositionX = ?,
+                playerTwoPositionY = ?,
+                ballPositionX = ?,
+                ballPositionY = ?,
                 elapsedTime = ?,
                 createdAt = ?
             WHERE id = ?
@@ -119,12 +128,15 @@ public class GameDAO {;
 
             ps.setInt(1, session.getPlayerOnePoint());
             ps.setInt(2, session.getPlayerTwoPoint());
-            ps.setObject(3, session.getPlayerOnePosition());
-            ps.setObject(4, session.getPlayerTwoPosition());
-            ps.setObject(5, session.getBallPosition());
-            ps.setBigDecimal(6, new java.math.BigDecimal(session.getElapsedTime()));
-            ps.setTimestamp(7, session.getCreatedAt());
-            ps.setInt(8, session.getId());
+            ps.setDouble(3, session.getPlayerOnePosition().x);
+            ps.setDouble(4, session.getPlayerOnePosition().y);
+            ps.setDouble(5, session.getPlayerTwoPosition().x);
+            ps.setDouble(6, session.getPlayerTwoPosition().y);
+            ps.setDouble(7, session.getBallPosition().x);
+            ps.setDouble(8, session.getBallPosition().y);
+            ps.setBigDecimal(9, new java.math.BigDecimal(session.getElapsedTime()));
+            ps.setTimestamp(10, session.getCreatedAt());
+            ps.setInt(11, session.getId());
 
             int rows = ps.executeUpdate();
             return rows > 0;
